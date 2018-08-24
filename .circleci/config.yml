@@ -22,4 +22,4 @@ jobs:
           name: zip dist
           command: 'cd dist && zip -r9 ../grafana-file-panel-dev.zip *'
       - store_artifacts:
-          path: *.zip
+          path: grafana-file-panel-dev.zip
