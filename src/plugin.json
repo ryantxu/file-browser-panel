@@ -1,0 +1,30 @@
+{
+  "type": "panel",
+  "name": "Files",
+  "id": "ryantxu-file-panel",
+
+  "info": {
+    "description": "File Browser grafana",
+    "author": {
+      "name": "ryantxu"
+    },
+    "keywords": [ "file", "directory", "browser" ],
+    "logos": {
+      "small": "img/file.svg",
+      "large": "img/file.svg"
+    },
+    "links": [
+      {"name": "Project site", "url": "https://github.com/ryantxu/file-panel"}
+    ],
+    "screenshots": [
+      { "name": "Example",     "path": "img/screenshot-example.png"  }
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "4.x.x",
+    "plugins": [ ]
+  }
+}

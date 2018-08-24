@@ -1,0 +1,30 @@
+<div>
+
+    <table 
+        width="100%" 
+        ng-if="ctrl.directory.files" 
+        class="filter-table form-inline filter-table--hover"
+        style="margin-bottom: 20px;">
+        <tr>
+             <th>Name</th>
+             <th>Modified</th>
+        </tr>
+        <tr ng-if="ctrl.directory.path.length > 0" ng-click="ctrl._load('..', ctrl.directory)" style="cursor:pointer;">
+            <td colspan="2">
+                ..
+            </td>
+        </tr>
+        <tr ng-repeat="f in ctrl.directory.files">
+            <td ng-if="f.url">
+                <a ng-href="{{ f.url }}">{{ f.name }}</a>
+            </td>
+            <td ng-if="!f.url" ng-click="ctrl.clicked(f, $event)">
+                <a href="#">{{ f.name }}</a>
+            </td>
+            <td>
+                {{ f.type }}
+            </td>
+        </tr>
+    </table>
+
+</div>

@@ -1,0 +1,28 @@
+
+
+<div class="editor-row">
+
+    <div class="section gf-form-group">
+      <h5 class="section-heading">{{ ctrl.panel.server.type }}</h5>
+
+      <div class="gf-form">
+        <span class="gf-form-label width-7">Base URL</span>
+        <input class="gf-form-input min-width-15" type="text" 
+          ng-model="ctrl.panel.server.url" 
+          ng-model-onblur 
+          ng-change="ctrl.configChanged()" />
+      </div>
+    </div>
+
+</div>
+
+SERVER:
+<pre>
+    {{ctrl.server | json}}
+</pre>
+
+
+DIRECTORY:
+<pre>
+    {{ctrl.directory | json}}
+</pre>
