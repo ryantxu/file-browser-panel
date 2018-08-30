@@ -1,25 +1,66 @@
 
 
-<h3 class="page-heading">File System</h3>
 <div class="gf-form">
-    <span class="gf-form-label width-7">System</span>
-    <div class="gf-form-select-wrapper max-width-23">
-        <select class="gf-form-input" 
-          ng-model="ctrl.datasourceName" 
-          ng-change="ctrl.onFileSystemChanged()"
-          >
-          <option value="" ng-if="!ctrl.server">** Select File System **</option>
-          <option ng-repeat="name in ctrl.serverNames" value="{{name}}">{{name}}</option>
-        </select>
-    </div>
-    <span class="gf-form">
-      <a href="#X" style="color:aqua;"><i class="fa fa-cog" aria-hidden="true"></i> configure</a>
-    </span>
+  <span class="gf-form-label width-10">File System</span>
+  <div class="gf-form-select-wrapper width-23">
+      <select class="gf-form-input" 
+        ng-model="ctrl.datasourceName" 
+        ng-change="ctrl.onFileSystemChanged()"
+        >
+        <option value="" ng-if="!ctrl.server">** Select File System **</option>
+        <option ng-repeat="name in ctrl.serverNames" value="{{name}}">{{name}}</option>
+      </select>
+  </div>
+  <span class="gf-form" ng-if="ctrl.serverId">
+    <a ng-href="datasources/edit/{{ctrl.serverId}}" 
+      bs-tooltip="'Configure the datasource server'" 
+      data-placement="top"
+      style="color:aqua;"
+      ><i class="fa fa-cog" aria-hidden="true"></i> configure</a>
+  </span>
+</div>
+<div class="gf-form" ng-if="ctrl.serverId">
+  <span class="gf-form-label width-10">Initial Path</span>
+  <input type="text" 
+    class="gf-form-input width-23" 
+    placeholder="Root Path" 
+    ng-model="ctrl.panel.root" 
+    ng-change="ctrl.onConfigChanged()" ng-model-onblur />
+  <span class="gf-form" ng-if="ctrl.path">
+    <a href=""
+      ng-click="ctrl.updateRootPath()" 
+      bs-tooltip="'Use the current path as the root'" 
+      data-placement="top"
+      style="color:aqua;"
+      >update</a>
+  </span>
+</div>
+<div class="gf-form" ng-if="!ctrl.serverId">
+  This panel requires a File System Datasrouce to 
+  Configure a FileSystem Datasource
 </div>
 <br/>
 
 
-DIRECTORY:
-<pre>
-    {{ctrl.directory | json}}
-</pre>
+<div class="editor-row">
+  <div class="gf-form-group">
+    <h5 class="section-heading">Browser</h5>
+    <gf-form-switch 
+        class="gf-form-inline" 
+        label="Allow Navigation" 
+        label-class="width-10" 
+        tooltip="Use a data source to supports advanced authentication or proxy"
+        checked="ctrl.panel.allowNavigation" 
+        on-change="ctrl.onConfigChanged"></gf-form-switch>
+        
+    <gf-form-switch 
+        class="gf-form-inline" 
+        label="Show Path" 
+        label-class="width-10" 
+        tooltip="Use a data source to supports advanced authentication or proxy"
+        checked="ctrl.panel.showPath" 
+        on-change="ctrl.onConfigChanged"></gf-form-switch>
+
+    </span>
+  </div>
+</div>

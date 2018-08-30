@@ -1,30 +1,36 @@
 <div>
+  <label class="gf-form gf-form--grow gf-form--has-input-icon"
+    ng-if="ctrl.panel.showPath && ctrl.panel.allowNavigation" >
+    <input type="text" 
+      class="gf-form-input gf-form--grow" 
+      ng-model="ctrl.path" 
+      ng-keypress="ctrl.onKeyPress( $event )"/>><i class="gf-form-input-icon fa fa-folder-open-o"></i>
+  </label>
 
-    <table 
-        width="100%" 
-        ng-if="ctrl.directory.files" 
-        class="filter-table form-inline filter-table--hover"
-        style="margin-bottom: 20px;">
-        <tr>
-             <th>Name</th>
-             <th>Modified</th>
-        </tr>
-        <tr ng-if="ctrl.directory.path.length > 0" ng-click="ctrl._load('..', ctrl.directory)" style="cursor:pointer;">
-            <td colspan="2">
-                ..
-            </td>
-        </tr>
-        <tr ng-repeat="f in ctrl.directory.files">
-            <td ng-if="f.url">
-                <a ng-href="{{ f.url }}">{{ f.name }}</a>
-            </td>
-            <td ng-if="!f.url" ng-click="ctrl.clicked(f, $event)">
-                <a href="#">{{ f.name }}</a>
-            </td>
-            <td>
-                {{ f.type }}
-            </td>
-        </tr>
-    </table>
-
+  <table 
+    width="100%" 
+    ng-if="ctrl.directory.files" 
+    class="filter-table form-inline filter-table--hover"
+    style="margin-bottom: 20px;">
+    <tr>
+      <th>Name</th>
+      <th>Modified</th>
+    </tr>
+    <tr ng-if="ctrl.panel.allowNavigation && ctrl.path.length > 1" ng-click="ctrl._navigate('..')" style="cursor:pointer;">
+      <td colspan="2" title="Navigate up a folder">
+         .. 
+      </td>
+    </tr>
+    <tr ng-repeat="f in ctrl.directory.files">
+      <td ng-if="f.url">
+          <a download ng-href="{{ f.url }}">{{ f.name }}</a>
+      </td>
+      <td ng-if="!f.url" ng-click="ctrl.clicked(f, $event)" style="cursor:pointer;">
+          <a href="#">{{ f.name }}</a>
+      </td>
+      <td>
+          {{ f.type }}
+      </td>
+    </tr>
+  </table>
 </div>
