@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1"
+	id="svg2517" 
+	xmlns="http://www.w3.org/2000/svg" 
+	xmlns:xlink="http://www.w3.org/1999/xlink" 
+	x="0px" y="0px"
+	viewBox="0 -36.108 340 306.918"
+	style="enable-background:new 0 -36.108 340 306.918; fill:url(#linear-gradient); stroke-width:0.1px; stroke:#0c4c75;" 
+	xml:space="preserve">
+	<defs xmlns="http://www.w3.org/2000/svg">
+		<linearGradient xmlns="http://www.w3.org/2000/svg" id="linear-gradient" x1="50" y1="101.02" x2="50" y2="4.05" gradientTransform="matrix(1, 0, 0, -1, 0, 102)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#70b0df"/><stop offset="0.5" stop-color="#1b81c5"/><stop offset="1" stop-color="#4a98ce"/></linearGradient>
+	</defs>
+	
+
+	<g>
+		<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="105.354" y1="30.675" x2="278.118" y2="30.675"/>
+		<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="68.827" y1="30.675" x2="92.354" y2="30.675"/>
+	</g>
+	<polygon fill="none" stroke="#397BCE" stroke-width="10" stroke-miterlimit="10" points="306.5,-18.054 33.5,-18.054 33.5,252.757 217.804,252.757 306.5,162.944 "/>
+	<polyline fill="none" stroke="#397BCE" stroke-width="10" stroke-miterlimit="10" points="217.804,252.757 217.804,162.944  306.5,162.944 "/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="101.882" y1="74.765" x2="274.646" y2="74.765"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="65.354" y1="74.765" x2="88.882" y2="74.765"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="101.882" y1="118.854" x2="274.646" y2="118.854"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="65.354" y1="118.854" x2="88.882" y2="118.854"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="101.882" y1="162.944" x2="197.027" y2="162.944"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="65.354" y1="162.944" x2="88.882" y2="162.944"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="101.882" y1="207.032" x2="197.027" y2="207.032"/>
+	<line fill="none" stroke="#397BCE" stroke-width="13" stroke-miterlimit="10" x1="65.354" y1="207.032" x2="88.882" y2="207.032"/>
+</svg>

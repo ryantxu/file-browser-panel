@@ -1,25 +1,22 @@
 
 
-<div class="editor-row">
-
-    <div class="section gf-form-group">
-      <h5 class="section-heading">{{ ctrl.panel.server.type }}</h5>
-
-      <div class="gf-form">
-        <span class="gf-form-label width-7">Base URL</span>
-        <input class="gf-form-input min-width-15" type="text" 
-          ng-model="ctrl.panel.server.url" 
-          ng-model-onblur 
-          ng-change="ctrl.configChanged()" />
-      </div>
+<h3 class="page-heading">File System</h3>
+<div class="gf-form">
+    <span class="gf-form-label width-7">System</span>
+    <div class="gf-form-select-wrapper max-width-23">
+        <select class="gf-form-input" 
+          ng-model="ctrl.datasourceName" 
+          ng-change="ctrl.onFileSystemChanged()"
+          >
+          <option value="" ng-if="!ctrl.server">** Select File System **</option>
+          <option ng-repeat="name in ctrl.serverNames" value="{{name}}">{{name}}</option>
+        </select>
     </div>
-
+    <span class="gf-form">
+      <a href="#X" style="color:aqua;"><i class="fa fa-cog" aria-hidden="true"></i> configure</a>
+    </span>
 </div>
-
-SERVER:
-<pre>
-    {{ctrl.server | json}}
-</pre>
+<br/>
 
 
 DIRECTORY:

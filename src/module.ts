@@ -1,23 +1,31 @@
 ///<reference path="../node_modules/grafana-sdk-mocks/app/headers/common.d.ts" />
 
-import {PanelCtrl} from 'app/plugins/sdk';
-import * as F from './FileServer';
+import {MetricsPanelCtrl} from 'app/plugins/sdk';
+
+import * as FS from '../node_modules/ryantxu-file-system-datasource/src/FileSystem';
+
+
+export const FILE_SYSTEM_KEY = "ryantxu-file-system-datasource";
 
 //import $ from 'jquery';
 import _ from 'lodash';
 
-class FileBrowserCtrl extends PanelCtrl {
+class FileBrowserCtrl extends MetricsPanelCtrl {
   static templateUrl = 'partials/module.html';
   static scrollable = true;
 
-  server: F.FileServer;
-  directory: F.DirectoryInfo;
+
+  server: FS.FileSystem;
+  directory: FS.DirectoryInfo;
+
+  // key for what fs is set
+  serverNames: string[];
 
   // actually already defined!
   loading: boolean = false;
 
   /** @ngInject */
-  constructor($scope, $injector, protected $http) {
+  constructor($scope, $injector, public datasourceSrv) {
     super($scope, $injector);
 
     _.defaults(this.panel, {
@@ -25,10 +33,6 @@ class FileBrowserCtrl extends PanelCtrl {
       show: {
         path: true,
         directories: true,
-      },
-      server: { 
-        type: 'NGINX',
-        url: 'https://your-host/root/',
       }
     });
 
@@ -38,23 +42,27 @@ class FileBrowserCtrl extends PanelCtrl {
     this.events.on('refresh', this.onRefresh.bind(this));
   }
 
+  // File System changed in the UI
+  onFileSystemChanged() {
+    this.loadDatasource(this.datasourceName);
+  }
+
+  loadDatasource(name) {
+    this.datasourceSrv.get(name).then( ds => {
+      const fs = ds.getFileSystem();
+      if(fs) {
+        this.server = fs;
+      }
+      this.setDatasource( ds );
+    });
+  }
+
   onPanelInitalized() {
     this.configChanged();
   }
 
   configChanged() {
     console.log('Config Changed');
-    this.initServer();
-  }
-
-  initServer() {
-    if('NGINX'===this.panel.server.type) {
-      this.server = new F.FileServerNGINX(this.panel.server, this.$http);
-    }
-    else {
-      console.error('not sure how to make:', this.panel.server);
-      return;
-    }
   }
 
   onRefresh() {
@@ -62,7 +70,7 @@ class FileBrowserCtrl extends PanelCtrl {
     this._load(this.panel.path);
   }
 
-  _load(path:string, dir?:F.DirectoryInfo) {
+  _load(path:string, dir?:FS.DirectoryInfo) {
     if(this.server) {
       this.loading = true;
       this.server.list(path, dir).then( d => {
@@ -80,6 +88,8 @@ class FileBrowserCtrl extends PanelCtrl {
   }
 
   onInitEditMode() {
+    this.editorTabs.splice(1, 1); // remove the 'Metrics Tab'
+    this.serverNames = this.getFileServerNames();
     this.addEditorTab(
       'Options',
       'public/plugins/' + this.pluginId + '/partials/editor.options.html',
@@ -87,8 +97,18 @@ class FileBrowserCtrl extends PanelCtrl {
     );
     this.editorTabIndex = 1;
   }
+  
+  getFileServerNames(): string[] {
+    return _.chain(this.datasourceSrv.getMetricSources())
+      .filter( s => {
+        return FILE_SYSTEM_KEY === s.meta.id;
+      })
+      .map( s => {
+        return s.name; 
+      }).value();
+  }
 
-  clicked(file:F.FileInfo, evt?:any ) {
+  clicked(file:FS.FileInfo, evt?:any ) {
     if (evt) {
       evt.stopPropagation();
       evt.preventDefault();

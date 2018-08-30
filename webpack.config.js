@@ -30,10 +30,6 @@ module.exports = {
     'lodash',
     'jquery',
     'moment',
-    'slate',
-    'prismjs',
-    'slate-plain-serializer',
-    'slate-react',
     function(context, request, callback) {
       var prefix = 'app/';
       if (request.indexOf(prefix) === 0) {
