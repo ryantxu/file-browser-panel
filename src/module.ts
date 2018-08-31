@@ -24,27 +24,41 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
 
   // key for what fs is set
   serverNames: string[];
+  variableNames: string[];
 
   // actually already defined!
   loading: boolean = false;
+  $location: any; // and filled in by panelctrl
 
   /** @ngInject */
   constructor($scope, $injector, public datasourceSrv) {
     super($scope, $injector);
 
-    //
-    _.defaults(this.panel, {
+    _.defaultsDeep(this.panel, {
       root: '/',
-      allowNavigation: true,
+
       showPath: true,
+      showHeaders: true,
+      skipRefresh: true,
+
+      folders: {
+        show: true,
+        navigate: true,
+        variable: null, 
+      },
+      files: {
+        show: true,
+        download: true,
+        variable: null, 
+      }
     });
 
     this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
     this.events.on('init-edit-mode', this.onInitEditMode.bind(this));
     this.events.on('render', this.onRender.bind(this));
-    this.events.on('refresh', this.onRefresh.bind(this));
   }
 
+  // Called from the search window
   onKeyPress( event:any ) {
     if(event.which === 13) {
       this._navigate(null);
@@ -101,11 +115,6 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
-  onRefresh() {
-    console.log('onRefresh');
-    this._navigate(null);
-  }
-
   updateRootPath() {
     this.panel.root = this._getRequestPath();
     this.path = '/';
@@ -157,15 +166,21 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     return this.panel.root;
   }
 
-
-  _navigate(rel:string) {
+  _navigate(rel:string): Promise<any> {
     if(this.server) {
       delete this.error;
       this.loading = true;
       this._updatePath(rel);
       const req = this._getRequestPath(); // will normalize
-      this.server.list(req).then( d => {
+      return this.server.list(req).then( d => {
+        this.loading = false;
         this.directory = d;
+        
+        // Updates the folder
+        if(this.panel.folders.variable ) {
+          this._updateVarable( this.panel.folders.variable, this.path );
+        }
+        return d;
       }).catch( err => {
         // See:
         // https://github.com/grafana/grafana/blob/master/public/app/features/panel/metrics_panel_ctrl.ts#L107
@@ -181,22 +196,41 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
             this.error = err.data.error;
           }
         }
-
+        this.directory = null;
         this.events.emit('data-error', err);
         console.log('Panel data error:', err);
-      }).finally(() => {
-        this.loading = false;
       });
     }
+    return Promise.resolve(null);
   }
 
   onRender() {
     this.renderingCompleted();
   }
+  
+  /**
+   * Rather than issue a datasource query, we will call our ajax request
+   * @override
+   */
+  issueQueries(datasource) {
+    if(this.directory && this.directory.path.endsWith(this.path) && this.panel.skipRefresh) {
+      console.log( 'Skip refresh since this did not change' );
+      return Promise.resolve([]);
+    }
+    return this._navigate(null);
+  }
+  
+  // Overrides the default handling
+  handleQueryResult(result) {
+    //console.log('handleQueryResult', Date.now(), this.loading);
+    this.render();
+  }
 
   onInitEditMode() {
     this.editorTabs.splice(1, 1); // remove the 'Metrics Tab'
     this.serverNames = this.getFileServerNames();
+    this.variableNames = this.getPossibleVariableNames();
+
     this.addEditorTab(
       'Options',
       'public/plugins/' + this.pluginId + '/partials/editor.options.html',
@@ -215,17 +249,49 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
       }).value();
   }
 
+  getPossibleVariableNames(): string[] {
+    console.log( 'FIND', this.templateSrv );
+    return _.chain(this.templateSrv.variables )
+      .filter( v => {
+        console.log( 'check', v );
+        return v.type !== "datasource";
+      })
+      .map( s => {
+        return s.name; 
+      }).value();
+  }
+
+  _updateVarable(varname:string, path:string) {
+    if(varname && varname.length > 0 && path) {
+      console.log('update variable', varname, path );
+      this.$location.search( 'var-'+varname, path );
+      this.dashboard.refresh();
+    }
+  }
+
   clicked(file:FS.FileInfo, evt?:any ) {
-    if (evt) {
+    let stop = true;
+
+    // Folders
+    if(file.browsable) {
+      if(this.panel.folders.navigate) {
+        this._navigate(file.name); // will handle variable internally!
+      }
+      else if(this.panel.folders.variable ) {
+        this._updateVarable( this.panel.folders.variable, this.path + file.name + '/' );
+      }
+    }
+    else {
+      stop = !this.panel.files.download;
+      if(this.panel.files.variable) {
+        this._updateVarable( this.panel.files.variable, this.path + file.name );
+      }
+    }
+
+    if (evt && stop) {
       evt.stopPropagation();
       evt.preventDefault();
     }
-
-    if(file.browsable) {
-      this._navigate(file.name);
-      return;
-    }
-
     console.log('CLICKED file:', file);
   }
 }

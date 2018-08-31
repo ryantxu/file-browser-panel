@@ -1,66 +1,145 @@
 
-
-<div class="gf-form">
-  <span class="gf-form-label width-10">File System</span>
-  <div class="gf-form-select-wrapper width-23">
-      <select class="gf-form-input" 
-        ng-model="ctrl.datasourceName" 
-        ng-change="ctrl.onFileSystemChanged()"
-        >
-        <option value="" ng-if="!ctrl.server">** Select File System **</option>
-        <option ng-repeat="name in ctrl.serverNames" value="{{name}}">{{name}}</option>
-      </select>
+<div class="editor-row">
+  <div class="gf-form">
+    <span class="gf-form-label width-10">File System</span>
+    <div class="gf-form-select-wrapper width-23">
+        <select class="gf-form-input" 
+          ng-model="ctrl.datasourceName" 
+          ng-change="ctrl.onFileSystemChanged()"
+          >
+          <option value="" ng-if="!ctrl.server">** Select File System **</option>
+          <option ng-repeat="name in ctrl.serverNames" value="{{name}}">{{name}}</option>
+        </select>
+    </div>
+    <span class="gf-form" ng-if="ctrl.serverId">
+      <a ng-href="datasources/edit/{{ctrl.serverId}}" 
+        bs-tooltip="'Configure the datasource server'" 
+        data-placement="top"
+        style="color:aqua;"
+        >&nbsp; configure <i class="fa fa-cog" aria-hidden="true"></i></a>
+    </span>
   </div>
-  <span class="gf-form" ng-if="ctrl.serverId">
-    <a ng-href="datasources/edit/{{ctrl.serverId}}" 
-      bs-tooltip="'Configure the datasource server'" 
-      data-placement="top"
-      style="color:aqua;"
-      ><i class="fa fa-cog" aria-hidden="true"></i> configure</a>
-  </span>
-</div>
-<div class="gf-form" ng-if="ctrl.serverId">
-  <span class="gf-form-label width-10">Initial Path</span>
-  <input type="text" 
-    class="gf-form-input width-23" 
-    placeholder="Root Path" 
-    ng-model="ctrl.panel.root" 
-    ng-change="ctrl.onConfigChanged()" ng-model-onblur />
-  <span class="gf-form" ng-if="ctrl.path">
-    <a href=""
-      ng-click="ctrl.updateRootPath()" 
-      bs-tooltip="'Use the current path as the root'" 
-      data-placement="top"
-      style="color:aqua;"
-      >update</a>
-  </span>
-</div>
-<div class="gf-form" ng-if="!ctrl.serverId">
-  This panel requires a File System Datasrouce to 
-  Configure a FileSystem Datasource
-</div>
-<br/>
 
+  <div class="gf-form" ng-if="ctrl.serverId">
+    <span class="gf-form-label width-10">Initial Path</span>
+    <input type="text" 
+      class="gf-form-input width-23" 
+      placeholder="Root Path" 
+      ng-model="ctrl.panel.root" 
+      ng-change="ctrl.onConfigChanged()" ng-model-onblur />
+    <span class="gf-form" ng-if="ctrl.path.length > 1">
+      <a href=""
+        ng-click="ctrl.updateRootPath()" 
+        bs-tooltip="'Use the current path as the root'" 
+        data-placement="top"
+        style="color:aqua;"
+        >&nbsp; update</a>
+    </span>
+  </div>
+  <div class="gf-form" ng-if="!ctrl.serverId">
+    This panel requires a File System Datasrouce to 
+    Configure a FileSystem Datasource
+  </div>
+  <br/>
+</div>
 
 <div class="editor-row">
-  <div class="gf-form-group">
+  <div class="section gf-form-group">
     <h5 class="section-heading">Browser</h5>
-    <gf-form-switch 
-        class="gf-form-inline" 
-        label="Allow Navigation" 
-        label-class="width-10" 
-        tooltip="Use a data source to supports advanced authentication or proxy"
-        checked="ctrl.panel.allowNavigation" 
-        on-change="ctrl.onConfigChanged"></gf-form-switch>
-        
+
     <gf-form-switch 
         class="gf-form-inline" 
         label="Show Path" 
         label-class="width-10" 
-        tooltip="Use a data source to supports advanced authentication or proxy"
         checked="ctrl.panel.showPath" 
-        on-change="ctrl.onConfigChanged"></gf-form-switch>
-
-    </span>
+        on-change="ctrl.onConfigChanged()"></gf-form-switch>
+        
+    <gf-form-switch 
+        class="gf-form-inline" 
+        label="Show Headers" 
+        label-class="width-10" 
+        checked="ctrl.panel.showHeaders" 
+        on-change="ctrl.onConfigChanged()"></gf-form-switch>
+    
+    <gf-form-switch 
+        class="gf-form-inline" 
+        label="Skip Refresh" 
+        label-class="width-10" 
+        tooltip="Don't refresh unless the path changes"
+        checked="ctrl.panel.skipRefresh" 
+        on-change="ctrl.onConfigChanged()"></gf-form-switch>
   </div>
+
+  <div class="section gf-form-group">
+    <h5 class="section-heading">Folders</h5>
+    
+    <gf-form-switch 
+        class="gf-form-inline" 
+        label="Show" 
+        label-class="width-8" 
+        checked="ctrl.panel.folders.show" 
+        on-change="ctrl.onConfigChanged()"></gf-form-switch>
+        
+    <gf-form-switch 
+        class="gf-form-inline" 
+        label="Navigate" 
+        label-class="width-8" 
+        checked="ctrl.panel.folders.navigate" 
+        on-change="ctrl.onConfigChanged()"></gf-form-switch>
+    
+    <div class="gf-form-inline">
+      <span class="gf-form-label width-8">Variable</span>
+      <div class="gf-form-select-wrapper" 
+        ng-if="ctrl.variableNames">
+        <select class="gf-form-input template-variable" 
+          ng-model="ctrl.panel.folders.variable" 
+          ng-change="ctrl.onConfigChanged()"
+          >
+          <option>-- none --</option>
+          <option ng-repeat="var in ctrl.variableNames" value="{{var}}">{{var}}</option>
+        </select>
+      </div>
+      <div class="gf-form" ng-if="!ctrl.variableNames">
+        NO VARABLES!!!
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section gf-form-group">
+      <h5 class="section-heading">Files</h5>
+      
+      <gf-form-switch 
+          class="gf-form-inline" 
+          label="Show" 
+          label-class="width-8" 
+          checked="ctrl.panel.files.show" 
+          on-change="ctrl.onConfigChanged()"></gf-form-switch>
+          
+      <gf-form-switch 
+          class="gf-form-inline" 
+          label="Download" 
+          label-class="width-8" 
+          checked="ctrl.panel.files.download" 
+          on-change="ctrl.onConfigChanged()"></gf-form-switch>
+      
+      <div class="gf-form-inline">
+        <span class="gf-form-label width-8">Variable</span>
+        <div class="gf-form-select-wrapper" 
+          ng-if="ctrl.variableNames">
+          <select class="gf-form-input template-variable" 
+            ng-model="ctrl.panel.files.variable" 
+            ng-change="ctrl.onConfigChanged()"
+            >
+            <option>-- none --</option>
+            <option ng-repeat="var in ctrl.variableNames" value="{{var}}">{{var}}</option>
+          </select>
+        </div>
+        <div class="gf-form" ng-if="!ctrl.variableNames">
+          NO VARABLES!!!
+        </div>
+      </div>
+    </div>
+
 </div>
+

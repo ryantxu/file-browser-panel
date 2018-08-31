@@ -12,7 +12,7 @@
     ng-if="ctrl.directory.files" 
     class="filter-table form-inline filter-table--hover"
     style="margin-bottom: 20px;">
-    <tr>
+    <tr ng-if="ctrl.panel.showHeaders">
       <th>Name</th>
       <th>Modified</th>
     </tr>
@@ -22,11 +22,8 @@
       </td>
     </tr>
     <tr ng-repeat="f in ctrl.directory.files">
-      <td ng-if="f.url">
+      <td ng-click="ctrl.clicked(f, $event)" style="cursor:pointer;">
           <a download ng-href="{{ f.url }}">{{ f.name }}</a>
-      </td>
-      <td ng-if="!f.url" ng-click="ctrl.clicked(f, $event)" style="cursor:pointer;">
-          <a href="#">{{ f.name }}</a>
       </td>
       <td>
           {{ f.type }}
