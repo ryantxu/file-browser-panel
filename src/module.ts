@@ -31,7 +31,7 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   $location: any; // and filled in by panelctrl
 
   /** @ngInject */
-  constructor($scope, $injector, public datasourceSrv) {
+  constructor($scope, $injector, public datasourceSrv, public variableSrv) {
     super($scope, $injector);
 
     _.defaultsDeep(this.panel, {
@@ -250,7 +250,6 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   }
 
   getPossibleVariableNames(): string[] {
-    console.log( 'FIND', this.templateSrv );
     return _.chain(this.templateSrv.variables )
       .filter( v => {
         console.log( 'check', v );
@@ -264,8 +263,16 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   _updateVarable(varname:string, path:string) {
     if(varname && varname.length > 0 && path) {
       console.log('update variable', varname, path );
-      this.$location.search( 'var-'+varname, path );
-      this.dashboard.refresh();
+      let v = _.find(this.variableSrv.variables, check => {
+        return check.name === varname;
+      });
+      if(v) {
+        this.variableSrv.setOptionAsCurrent(v, {
+          text: path,
+          value: path,
+        });
+        this.variableSrv.variableUpdated(v, true);
+      }
     }
   }
 
