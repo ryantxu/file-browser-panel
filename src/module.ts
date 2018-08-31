@@ -6,7 +6,7 @@ import * as FS from '../node_modules/ryantxu-file-system-datasource/src/FileSyst
 
 import config from 'app/core/config';
 
-export const FILE_SYSTEM_KEY = "ryantxu-file-system-datasource";
+export const FILE_SYSTEM_KEY = 'ryantxu-file-system-datasource';
 
 //import $ from 'jquery';
 import _ from 'lodash';
@@ -44,13 +44,13 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
       folders: {
         show: true,
         navigate: true,
-        variable: null, 
+        variable: null,
       },
       files: {
         show: true,
         download: true,
-        variable: null, 
-      }
+        variable: null,
+      },
     });
 
     this.events.on('panel-initialized', this.onPanelInitalized.bind(this));
@@ -59,8 +59,8 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   }
 
   // Called from the search window
-  onKeyPress( event:any ) {
-    if(event.which === 13) {
+  onKeyPress(event: any) {
+    if (event.which === 13) {
       this._navigate(null);
     }
   }
@@ -70,14 +70,14 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     this.loadDatasource(this.datasourceName, true);
   }
 
-  loadDatasource(name, dorefresh=false) {
-    this.datasourceSrv.get(name).then( ds => {
+  loadDatasource(name, dorefresh = false) {
+    this.datasourceSrv.get(name).then(ds => {
       const fs = ds.getFileSystem();
-      if(fs) {
+      if (fs) {
         this.server = fs;
       }
       const cfg = config.datasources[ds.name];
-      if(cfg) {
+      if (cfg) {
         this.serverId = cfg.id;
       }
       // Same as super.setDatasource() but without refresh
@@ -85,7 +85,7 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
       this.datasourceName = name;
       this.datasource = null;
 
-      if(dorefresh) {
+      if (dorefresh) {
         this.refresh();
       }
     });
@@ -98,13 +98,12 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   }
 
   onPanelInitalized() {
-    if(this.panel.datasource) {
+    if (this.panel.datasource) {
       this.loadDatasource(this.panel.datasource);
-    }
-    else {
+    } else {
       // Default to the first file system
       const names = this.getFileServerNames();
-      if(names && names.length>0) {
+      if (names && names.length > 0) {
         this.loadDatasource(names[0]);
       }
     }
@@ -122,31 +121,30 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     this.refresh();
   }
 
-  static _makeSureItStartsAndEndsWithSlash(v:string):string {
-    if(!v) {
+  static _makeSureItStartsAndEndsWithSlash(v: string): string {
+    if (!v) {
       return '/';
     }
-    if(!v.startsWith('/')) {
+    if (!v.startsWith('/')) {
       v = '/' + v;
     }
-    if(!v.endsWith('/')) {
+    if (!v.endsWith('/')) {
       return v + '/';
     }
     return v;
   }
 
-  _updatePath(rel:string):boolean {
-    if(rel && rel.length > 0) {
+  _updatePath(rel: string): boolean {
+    if (rel && rel.length > 0) {
       const dnorm = FileBrowserCtrl._makeSureItStartsAndEndsWithSlash(this.path);
-      if('..'===rel) {
-        const idx =  dnorm.lastIndexOf('/', dnorm.length-2);
-        this.path = dnorm.substring(0,idx+1);
+      if ('..' === rel) {
+        const idx = dnorm.lastIndexOf('/', dnorm.length - 2);
+        this.path = dnorm.substring(0, idx + 1);
         return true;
       }
-      if(rel.startsWith('/')) {
+      if (rel.startsWith('/')) {
         this.path = this.path + rel.substring(1);
-      }
-      else {
+      } else {
         this.path = this.path + rel;
       }
       return true;
@@ -154,11 +152,11 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     return false;
   }
 
-  _getRequestPath():string {
+  _getRequestPath(): string {
     this.panel.root = FileBrowserCtrl._makeSureItStartsAndEndsWithSlash(this.panel.root);
     this.path = FileBrowserCtrl._makeSureItStartsAndEndsWithSlash(this.path);
-    if(this.path.length > 1) {
-      if(this.panel.root.length > 1) {
+    if (this.path.length > 1) {
+      if (this.panel.root.length > 1) {
         return this.panel.root + this.path.substr(1);
       }
       return this.path;
@@ -166,40 +164,43 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     return this.panel.root;
   }
 
-  _navigate(rel:string): Promise<any> {
-    if(this.server) {
+  _navigate(rel: string): Promise<any> {
+    if (this.server) {
       delete this.error;
       this.loading = true;
       this._updatePath(rel);
       const req = this._getRequestPath(); // will normalize
-      return this.server.list(req).then( d => {
-        this.loading = false;
-        this.directory = d;
-        
-        // Updates the folder
-        if(this.panel.folders.variable ) {
-          this._updateVarable( this.panel.folders.variable, this.path );
-        }
-        return d;
-      }).catch( err => {
-        // See:
-        // https://github.com/grafana/grafana/blob/master/public/app/features/panel/metrics_panel_ctrl.ts#L107
-        this.loading = false;
-        this.error = err.message || 'Request Error';
-        this.inspector = { error: err };
+      return this.server
+        .list(req)
+        .then(d => {
+          this.loading = false;
+          this.directory = d;
 
-        if (err.data) {
-          if (err.data.message) {
-            this.error = err.data.message;
+          // Updates the folder
+          if (this.panel.folders.variable) {
+            this._updateVarable(this.panel.folders.variable, this.path);
           }
-          if (err.data.error) {
-            this.error = err.data.error;
+          return d;
+        })
+        .catch(err => {
+          // See:
+          // https://github.com/grafana/grafana/blob/master/public/app/features/panel/metrics_panel_ctrl.ts#L107
+          this.loading = false;
+          this.error = err.message || 'Request Error';
+          this.inspector = {error: err};
+
+          if (err.data) {
+            if (err.data.message) {
+              this.error = err.data.message;
+            }
+            if (err.data.error) {
+              this.error = err.data.error;
+            }
           }
-        }
-        this.directory = null;
-        this.events.emit('data-error', err);
-        console.log('Panel data error:', err);
-      });
+          this.directory = null;
+          this.events.emit('data-error', err);
+          console.log('Panel data error:', err);
+        });
     }
     return Promise.resolve(null);
   }
@@ -207,19 +208,23 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   onRender() {
     this.renderingCompleted();
   }
-  
+
   /**
    * Rather than issue a datasource query, we will call our ajax request
    * @override
    */
   issueQueries(datasource) {
-    if(this.directory && this.directory.path.endsWith(this.path) && this.panel.skipRefresh) {
-      console.log( 'Skip refresh since this did not change' );
+    if (
+      this.directory &&
+      this.directory.path.endsWith(this.path) &&
+      this.panel.skipRefresh
+    ) {
+      console.log('Skip refresh since this did not change');
       return Promise.resolve([]);
     }
     return this._navigate(null);
   }
-  
+
   // Overrides the default handling
   handleQueryResult(result) {
     //console.log('handleQueryResult', Date.now(), this.loading);
@@ -238,35 +243,37 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     );
     this.editorTabIndex = 1;
   }
-  
+
   getFileServerNames(): string[] {
     return _.chain(this.datasourceSrv.getAll())
-      .filter( s => {
+      .filter(s => {
         return FILE_SYSTEM_KEY === s.meta.id;
       })
-      .map( s => {
-        return s.name; 
-      }).value();
+      .map(s => {
+        return s.name;
+      })
+      .value();
   }
 
   getPossibleVariableNames(): string[] {
-    return _.chain(this.templateSrv.variables )
-      .filter( v => {
-        console.log( 'check', v );
-        return v.type !== "datasource";
+    return _.chain(this.templateSrv.variables)
+      .filter(v => {
+        console.log('check', v);
+        return v.type !== 'datasource';
       })
-      .map( s => {
-        return s.name; 
-      }).value();
+      .map(s => {
+        return s.name;
+      })
+      .value();
   }
 
-  _updateVarable(varname:string, path:string) {
-    if(varname && varname.length > 0 && path) {
-      console.log('update variable', varname, path );
+  _updateVarable(varname: string, path: string) {
+    if (varname && varname.length > 0 && path) {
+      console.log('update variable', varname, path);
       let v = _.find(this.variableSrv.variables, check => {
         return check.name === varname;
       });
-      if(v) {
+      if (v) {
         this.variableSrv.setOptionAsCurrent(v, {
           text: path,
           value: path,
@@ -276,22 +283,20 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
     }
   }
 
-  clicked(file:FS.FileInfo, evt?:any ) {
+  clicked(file: FS.FileInfo, evt?: any) {
     let stop = true;
 
     // Folders
-    if(file.browsable) {
-      if(this.panel.folders.navigate) {
+    if (file.browsable) {
+      if (this.panel.folders.navigate) {
         this._navigate(file.name); // will handle variable internally!
+      } else if (this.panel.folders.variable) {
+        this._updateVarable(this.panel.folders.variable, this.path + file.name + '/');
       }
-      else if(this.panel.folders.variable ) {
-        this._updateVarable( this.panel.folders.variable, this.path + file.name + '/' );
-      }
-    }
-    else {
+    } else {
       stop = !this.panel.files.download;
-      if(this.panel.files.variable) {
-        this._updateVarable( this.panel.files.variable, this.path + file.name );
+      if (this.panel.files.variable) {
+        this._updateVarable(this.panel.files.variable, this.path + file.name);
       }
     }
 
