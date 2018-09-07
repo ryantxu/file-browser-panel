@@ -213,6 +213,8 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
    * @override
    */
   issueQueries(datasource) {
+    this.loading = false;
+
     if (
       this.directory &&
       this.directory.path.endsWith(this.path) &&
@@ -226,8 +228,8 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
 
   // Overrides the default handling
   handleQueryResult(result) {
-    //console.log('handleQueryResult', Date.now(), this.loading);
     this.render();
+    this.loading = false;
   }
 
   onInitEditMode() {
