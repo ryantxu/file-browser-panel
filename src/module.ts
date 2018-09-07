@@ -28,7 +28,6 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
 
   // actually already defined!
   loading: boolean = false;
-  $location: any; // and filled in by panelctrl
 
   /** @ngInject */
   constructor($scope, $injector, public datasourceSrv, public variableSrv) {
