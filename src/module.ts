@@ -209,7 +209,7 @@ class FileBrowserCtrl extends MetricsPanelCtrl {
   }
 
   /**
-   * Rather than issue a datasource query, we will call our ajax request
+   * Rather than issue a datasource query, this will just navigate
    * @override
    */
   issueQueries(datasource) {
